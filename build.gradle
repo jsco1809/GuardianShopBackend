@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.1.2' // Ejemplo de una versión compatible
-	id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.springframework.boot' version '4.0.0'
+	id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.ms-security'
@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
@@ -25,18 +25,21 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
-	implementation 'org.hibernate.validator:hibernate-validator:8.0.0.Final'
-	implementation 'com.nimbusds:nimbus-jose-jwt:9.31'
-	implementation 'commons-codec:commons-codec:1.16.0'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.15.2'
+	implementation 'org.hibernate.validator:hibernate-validator:8.0.3.Final'
+    implementation("com.nimbusds:nimbus-jose-jwt:10.6")
+	implementation 'commons-codec:commons-codec:1.20.0'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate7'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation("org.springframework.boot:spring-boot-starter-thymeleaf:3.3.5")
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -44,10 +47,10 @@ dependencies {
 	implementation 'com.stripe:stripe-java:26.12.0'
 	implementation 'com.paypal.sdk:rest-api-sdk:1.14.0'
 	implementation group: 'com.mercadopago', name: 'sdk-java', version: '1.11.0'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0'
 	implementation group: 'org.json', name: 'json', version: '20240303'
 	implementation("com.itextpdf:itext7-core:8.0.5")
-//	implementation("org.thymeleaf:thymeleaf-spring5:3.1.2.RELEASE")
+    
 
 
 }

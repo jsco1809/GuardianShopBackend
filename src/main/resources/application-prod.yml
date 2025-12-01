@@ -8,7 +8,7 @@ spring:
     show-sql: false
     open-in-view: false
     properties:
-      hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+      hibernate.dialect: org.hibernate.dialect.MySQLDialect
   doc:
     swagger-ui:
       disable-swagger-default-url: true
@@ -29,6 +29,9 @@ spring:
           auth: true
           starttls:
             enable: true
+  data:
+    redis:
+      enabled: false
 
 external:
   url-api-container: ${EXTERNAL_API_URL}

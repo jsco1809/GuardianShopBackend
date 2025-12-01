@@ -1,16 +1,16 @@
 package com.ms_security.ms_security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.datatype.hibernate7.Hibernate7Module;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
@@ -18,29 +18,29 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
+@Configuration
 public class CachingConfig {
 
     @Bean
-    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new Hibernate5Module()); // Registro de módulo para manejar las referencias LAZY
-        objectMapper.findAndRegisterModules();
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new Hibernate7Module());
+        mapper.findAndRegisterModules();
+        return mapper;
+    }
 
-        RedisSerializer<Object> jsonSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
-
+    @Bean
+    public RedisCacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
         RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer))
-                .entryTtl(Duration.ofMinutes(15)) // Configura el tiempo de expiración de las entradas en la caché
-                .disableCachingNullValues(); // Deshabilita el rechazo de valores nulos en la caché
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.json()))
+                .entryTtl(Duration.ofMinutes(15))
+                .disableCachingNullValues();
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(cacheConfiguration)
                 .build();
     }
 
-    /*
-    CONFIGURACION LOCAL
-*/
     @Bean
     public CacheManager cacheManager() {
         ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager() {
@@ -110,7 +110,6 @@ public class CachingConfig {
         );
 
         cacheManager.setCacheNames(cacheNames);
-
         return cacheManager;
     }
 }

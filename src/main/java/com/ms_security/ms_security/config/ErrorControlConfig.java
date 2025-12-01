@@ -55,7 +55,9 @@ public class ErrorControlConfig {
     public void init() throws Exception {
         String apiUrl = externalApiUrl + "error/list/all";
         String erroresString = restTemplate.postForObject(apiUrl, null, String.class);
-        log.info("Response from API: " + erroresString);
+        ObjectMapper mapper = new ObjectMapper();
+        Object json = mapper.readValue(erroresString, Object.class);
+        log.info("Response prettified: " + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json));
         errorResponseDtos = objectMapper.readValue(erroresString, new TypeReference<>() {});
         log.info("Deserialized response: " + errorResponseDtos.toString());
     }

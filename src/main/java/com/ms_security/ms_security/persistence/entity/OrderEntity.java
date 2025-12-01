@@ -21,7 +21,6 @@ public class OrderEntity {
     @Column(name = "ORDER_ID", nullable = false)
     private Long id;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ORDER_NUMBER", unique = true, nullable = false)
     private Long orderNumber;
 
