@@ -1,7 +1,9 @@
 package com.ms_security.ms_security.service;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 
 /**
@@ -32,7 +34,7 @@ public interface IServicesService {
      * @param encode the encoded details of the service to be added
      * @return a ResponseEntity indicating the success or failure of the addition
      */
-    ResponseEntity<String> addNew(String encode);
+    ResponseEntity<String> addNew(String encode, MultipartFile file) throws IOException;
 
     /**
      * Updates an existing service.
@@ -40,7 +42,7 @@ public interface IServicesService {
      * @param encode the encoded details of the service to be updated
      * @return a ResponseEntity indicating the success or failure of the update
      */
-    ResponseEntity<String> updateData(String encode);
+    ResponseEntity<String> updateData(String encode, MultipartFile file) throws IOException;
 
     void updateServiceSalePrice(Long productId, BigDecimal newPrice);
 

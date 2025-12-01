@@ -115,5 +115,19 @@ public class ErrorControlUtilities {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(encodeResponse);
     }
 
+    public String handleErrorAsString(Object object, Long errorId) {
+        Optional<ErrorResponseDto> errorResponseDto = searchById(errorId);
+        if (errorResponseDto.isEmpty()) {
+            return "UNKNOWN ERROR";
+        }
+        ErrorResponseDto errorDto = errorResponseDto.get();
+        BasicResponseDto<?> response = new BasicResponseDto<>(
+                errorDto.getErrorId(),
+                errorDto.getErrorName(),
+                object
+        );
+        return EncoderUtilities.encodeResponse(response);
+    }
+
 
 }

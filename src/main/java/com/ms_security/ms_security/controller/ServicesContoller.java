@@ -7,8 +7,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 /**
  * Controller class for handling service-related operations.
@@ -77,9 +81,11 @@ public class ServicesContoller {
                     @ApiResponse(responseCode = "400", description = "GENERAL ERROR", content = @Content(schema = @Schema(implementation = ResponseEntity.class)))
             }
     )
-    @PostMapping(path = "/addRecord",produces = {"application/json"})
-    public ResponseEntity<String>  addNew(@RequestBody String entity){
-        return _iServicesService.addNew(entity);
+    @PostMapping(path = "/addRecord",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String>  addNew(@RequestParam("entity") String entity, @RequestParam("file")MultipartFile file) throws IOException {
+        return _iServicesService.addNew(entity, file);
     }
 
     /**
@@ -98,8 +104,8 @@ public class ServicesContoller {
             }
     )
     @PostMapping(path = "/updateRecord",produces = {"application/json"})
-    public ResponseEntity<String>  updateData(@RequestBody String entity){
-        return _iServicesService.updateData(entity);
+    public ResponseEntity<String>  updateData(@RequestParam("entity") String entity,@RequestParam("file") MultipartFile file) throws IOException {
+        return _iServicesService.updateData(entity, file);
     }
 
     @Operation(summary = "GET SERVICE WITH INVENTORY DETAILS")

@@ -22,7 +22,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -37,8 +39,8 @@ public class ServicesImpl implements IServicesService {
     private final ServicesConsultations _servicesConsultations;
     private final InventoryConsultations _inventoryConsultations;
     private final IParametersService _iParametersService;
-    private final InventoryImpl _inventory;
     private final ErrorControlUtilities _errorControlUtilities;
+    private final CloudinaryImpl _cloudinary;
 
     /**
      * Method responsible for searching for a record by its ID.
@@ -95,7 +97,7 @@ public class ServicesImpl implements IServicesService {
      * @return A ResponseEntity object containing the created record or an error message.
      */
     @Override
-    public ResponseEntity<String> addNew(String encode) {
+    public ResponseEntity<String> addNew(String encode, MultipartFile file) throws IOException {
         EncoderUtilities.validateBase64(encode);
         log.info("INSERT BEGINS");
         ServicesDto servicesDto = EncoderUtilities.decodeRequest(encode, ServicesDto.class);
@@ -109,6 +111,12 @@ public class ServicesImpl implements IServicesService {
         Optional<ServicesEntity> servicesEntities = _servicesConsultations.findByName(servicesDto.getName());
         if (servicesEntities.isPresent()) return _errorControlUtilities.handleSuccess(null, 7L);
         log.info("END SEARCH BY NAME");
+        if (file != null && !file.isEmpty()) {
+            log.info("START UPLOAD FILE TO CLOUDINARY");
+            String uploadedUrl = _cloudinary.uploadFile(file);
+            servicesDto.setImageUrl(uploadedUrl);
+            log.info("END UPLOAD FILE TO CLOUDINARY: " + uploadedUrl);
+        }
         ServicesEntity existingEntity = parseEnt(servicesDto, new ServicesEntity());
         existingEntity.setCreateUser(servicesDto.getCreateUser());
         existingEntity.setDateTimeCreation(new Date().toString());
@@ -126,7 +134,7 @@ public class ServicesImpl implements IServicesService {
      */
     @Override
     @Transactional
-    public ResponseEntity<String> updateData(String encode) {
+    public ResponseEntity<String> updateData(String encode, MultipartFile file) throws IOException {
         EncoderUtilities.validateBase64(encode);
         log.info("UPDATE SERVICE BEGINS");
         ServicesDto servicesDto = EncoderUtilities.decodeRequest(encode, ServicesDto.class);
@@ -140,6 +148,14 @@ public class ServicesImpl implements IServicesService {
         existingService.setName(newServiceName);
         existingService.setCategoryId(servicesDto.getCategoryId());
         existingService.setDescription(servicesDto.getDescription());
+        if (file != null && !file.isEmpty()) {
+            log.info("START UPLOAD FILE TO CLOUDINARY");
+            String uploadedUrl = _cloudinary.uploadFile(file);
+            existingService.setImageUrl(uploadedUrl);
+            log.info("END UPLOAD FILE TO CLOUDINARY: " + uploadedUrl);
+        } else {
+            existingService.setImageUrl(servicesDto.getImageUrl());
+        }
         existingService.setImageUrl(servicesDto.getImageUrl());
         List<InventoryEntity> relatedInventories = _inventoryConsultations.findAllByServiceId(existingService.getId());
         for (InventoryEntity inventory : relatedInventories) {

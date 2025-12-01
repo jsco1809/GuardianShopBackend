@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -27,7 +28,6 @@ public class ServicesDto implements Serializable {
     @NotNull(message = "The description field cannot be null", groups = {Create.class, Update.class})
     private String description;
 
-    @NotNull(message = "The imageUrl field cannot be null", groups = {Create.class, Update.class})
     private String imageUrl;
 
     private BigDecimal salePrice;
