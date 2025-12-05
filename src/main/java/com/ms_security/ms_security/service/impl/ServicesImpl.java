@@ -153,10 +153,7 @@ public class ServicesImpl implements IServicesService {
             String uploadedUrl = _cloudinary.uploadFile(file);
             existingService.setImageUrl(uploadedUrl);
             log.info("END UPLOAD FILE TO CLOUDINARY: " + uploadedUrl);
-        } else {
-            existingService.setImageUrl(servicesDto.getImageUrl());
         }
-        existingService.setImageUrl(servicesDto.getImageUrl());
         List<InventoryEntity> relatedInventories = _inventoryConsultations.findAllByServiceId(existingService.getId());
         for (InventoryEntity inventory : relatedInventories) {
             inventory.setName(newServiceName + " " + inventory.getReference());
